@@ -9,6 +9,7 @@ object FPrincipal: TFPrincipal
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnClose = FormClose
   DesignerMasterStyle = 0
   object GroupBox1: TGroupBox
     Align = Bottom
@@ -34,16 +35,43 @@ object FPrincipal: TFPrincipal
   end
   object GroupBox2: TGroupBox
     Align = Right
-    Position.X = 808.000000000000000000
-    Size.Width = 247.000000000000000000
+    Position.X = 696.000000000000000000
+    Size.Width = 359.000000000000000000
     Size.Height = 560.000000000000000000
     Size.PlatformDefault = False
     Text = 'Details'
     TabOrder = 3
+    object sgDetails: TStringGrid
+      Align = Top
+      CanFocus = True
+      ClipChildren = True
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 20.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 20.000000000000000000
+      Size.Width = 339.000000000000000000
+      Size.Height = 269.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      RowCount = 10
+      Options = [AlternatingRowBackground, RowLines, Header]
+      Viewport.Width = 335.000000000000000000
+      Viewport.Height = 244.000000000000000000
+      object Details: TStringColumn
+        Header = 'Detail'
+        Size.Width = 200.000000000000000000
+      end
+      object Value: TStringColumn
+        Header = 'Value'
+        Size.Width = 130.000000000000000000
+      end
+    end
   end
   object gbTexto: TGroupBox
     Align = Client
-    Size.Width = 808.000000000000000000
+    Size.Width = 696.000000000000000000
     Size.Height = 560.000000000000000000
     Size.PlatformDefault = False
     Text = 'Text to analyze'
@@ -58,12 +86,12 @@ object FPrincipal: TFPrincipal
       Margins.Top = 20.000000000000000000
       Margins.Right = 10.000000000000000000
       Margins.Bottom = 10.000000000000000000
-      Size.Width = 788.000000000000000000
+      Size.Width = 676.000000000000000000
       Size.Height = 530.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
       OnKeyUp = mmoTextKeyUp
-      Viewport.Width = 784.000000000000000000
+      Viewport.Width = 672.000000000000000000
       Viewport.Height = 526.000000000000000000
     end
   end

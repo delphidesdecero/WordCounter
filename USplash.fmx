@@ -9,6 +9,7 @@ object FSplash: TFSplash
   Position = ScreenCenter
   SystemStatusBar.Visibility = Invisible
   StyleBook = FPrincipal.StyleBook1
+  Visible = True
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]

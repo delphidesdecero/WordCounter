@@ -27,8 +27,9 @@ uses UPrincipal;
 
 procedure TFSplash.tmrSplashTimer(Sender: TObject);
 begin
+  tmrSplash.Enabled := False;
+  FSplash.Visible := False;
   FPrincipal.Show;
-  Visible := False;
 end;
 
 end.
