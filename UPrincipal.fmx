@@ -10,6 +10,7 @@ object FPrincipal: TFPrincipal
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnClose = FormClose
+  OnShow = FormShow
   DesignerMasterStyle = 0
   object GroupBox1: TGroupBox
     Align = Bottom
@@ -98,55 +99,45 @@ object FPrincipal: TFPrincipal
   object MainMenu1: TMainMenu
     Left = 56
     Top = 32
-    object MenuItem1: TMenuItem
-      Text = 'File'
-      object MenuItem5: TMenuItem
+    object MenuFile: TMenuItem
+      Text = '&File'
+      object MenuNew: TMenuItem
         Locked = True
+        ShortCut = 16462
+        Text = 'New'
+        OnClick = MenuNewClick
+      end
+      object MenuOpen: TMenuItem
+        Locked = True
+        ShortCut = 16463
         Text = 'Open'
+        OnClick = MenuOpenClick
       end
-      object MenuItem6: TMenuItem
+      object MenuSave: TMenuItem
         Locked = True
+        ShortCut = 16467
         Text = 'Save'
+        OnClick = MenuSaveClick
       end
-      object MenuItem9: TMenuItem
+      object MenuSaveAs: TMenuItem
         Locked = True
+        ShortCut = 49235
         Text = 'Save as'
+        OnClick = MenuSaveAsClick
       end
-      object MenuItem10: TMenuItem
+      object MenuExit: TMenuItem
         Locked = True
+        ShortCut = 16472
         Text = 'Exit'
-        OnClick = MenuItem10Click
-      end
-    end
-    object MenuItem2: TMenuItem
-      Text = 'Tools'
-      object MenuItem7: TMenuItem
-        Locked = True
-        Text = 'MenuItem7'
-      end
-      object MenuItem8: TMenuItem
-        Locked = True
-        Text = 'MenuItem8'
-        object Memo1: TMemo
-          Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
-          DataDetectorTypes = []
-          Position.X = 8.000000000000000000
-          Position.Y = 8.000000000000000000
-          TabOrder = 0
-          Viewport.Width = 50.000000000000000000
-          Viewport.Height = 50.000000000000000000
-        end
+        OnClick = MenuExitClick
       end
     end
     object MenuItem3: TMenuItem
       Text = 'Help'
-      object MenuItem4: TMenuItem
-        Locked = True
-        Text = 'Help'
-      end
       object MenuItem11: TMenuItem
         Locked = True
         Text = 'About'
+        OnClick = MenuItem11Click
       end
     end
   end
@@ -3134,5 +3125,19 @@ object FPrincipal: TFPrincipal
       end>
     Left = 24
     Top = 32
+  end
+  object OpenDialog: TOpenDialog
+    DefaultExt = '*.txt'
+    Filter = 'Text File|*.txt'
+    Title = 'Open'
+    Left = 192
+    Top = 176
+  end
+  object SaveDialog: TSaveDialog
+    DefaultExt = '*.txt'
+    Filter = 'Text File|*.txt'
+    Title = 'Save'
+    Left = 264
+    Top = 176
   end
 end
