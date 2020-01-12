@@ -12356,7 +12356,7 @@ object FSplash: TFSplash
   object tmrSplash: TTimer
     Interval = 2000
     OnTimer = tmrSplashTimer
-    Left = 304
-    Top = 224
+    Left = 288
+    Top = 16
   end
 end
