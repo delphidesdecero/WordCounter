@@ -42,8 +42,8 @@ end;
 
 procedure TFAbout.FormShow(Sender: TObject);
 begin
-  lblVersion.Text := 'Versión 1.0';
-  //lblVersion.Text := 'Versión ' + GetAppVersionStr;
+  //lblVersion.Text := 'Versión 1.0';
+  lblVersion.Text := 'Versión ' + GetAppVersionStr;
 end;
 
 function TFAbout.GetAppVersionStr: string;

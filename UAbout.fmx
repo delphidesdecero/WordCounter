@@ -12415,7 +12415,7 @@ object FAbout: TFAbout
     Size.Height = 175.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 5
-    Viewport.Width = 376.000000000000000000
-    Viewport.Height = 171.000000000000000000
+    Viewport.Width = 380.000000000000000000
+    Viewport.Height = 175.000000000000000000
   end
 end

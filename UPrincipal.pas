@@ -4,13 +4,23 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes,
-  System.Variants, System.Rtti,
+  System.Variants, System.Rtti, System.Generics.Collections, Generics.Defaults,
   IniFiles,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Menus,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo,
-  FMX.Grid.Style, FMX.Grid, FMX.DialogService;
+  FMX.Grid.Style, FMX.Grid, FMX.DialogService, System.ImageList, FMX.ImgList;
 
 type
+  TCountWords = record
+    Word: string;
+    Count: Integer;
+  end;
+
+  TObjectWords = class(Tobject)
+   public
+      Data: TCountWords
+   end;
+
   TCountType = (ctWord, ctParagraph, ctSentence);
 
   TFPrincipal = class(TForm)
@@ -34,6 +44,14 @@ type
     OpenDialog: TOpenDialog;
     SaveDialog: TSaveDialog;
     MenuNew: TMenuItem;
+    ToolBar1: TToolBar;
+    sbNewFile: TSpeedButton;
+    ilIconMenu: TImageList;
+    sbOpenFile: TSpeedButton;
+    SpeedButton1: TSpeedButton;
+    sgKeywords: TStringGrid;
+    StringColumn1: TStringColumn;
+    StringColumn2: TStringColumn;
     procedure MenuExitClick(Sender: TObject);
     procedure mmoTextKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
     procedure WordCountToLabel;
@@ -45,11 +63,18 @@ type
     procedure mmoTextChangeTracking(Sender: TObject);
     procedure MenuSaveAsClick(Sender: TObject);
     procedure MenuItem11Click(Sender: TObject);
+    procedure sbNewFileClick(Sender: TObject);
+    procedure sbOpenFileClick(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     { Private declarations }
     procedure SaveFile;
+    procedure OpenFile;
     procedure SaveAsFile;
     procedure IsSaved;
+    procedure NewFile;
+    function Wrap(vText: String): String;
     function Counter(vText: String; vCountType: TCountType): Int64;
     function SegToHour(vSeg: Int64): String;
   public
@@ -58,6 +83,8 @@ type
     vSaved: Boolean;
     vIsOpenFile: Boolean;
     vPathFileOpen: String;
+    vaWords: array of TCountWords;
+    TSortListWords : TObjectList<TObjectWords>;
   end;
 
 var
@@ -67,7 +94,7 @@ implementation
 
 {$R *.fmx}
 
-uses USplash, UAbout;
+uses USplash, UAbout, Unit2;
 
 procedure TFPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 var
@@ -85,6 +112,7 @@ begin
 
   IsSaved;
 
+  TSortListWords.Free;
   Application.Terminate;
 end;
 
@@ -136,6 +164,11 @@ end;
 
 procedure TFPrincipal.MenuNewClick(Sender: TObject);
 begin
+  NewFile;
+end;
+
+procedure TFPrincipal.NewFile;
+begin
   IsSaved;
 
   mmoText.Lines.Clear;
@@ -145,6 +178,11 @@ begin
 end;
 
 procedure TFPrincipal.MenuOpenClick(Sender: TObject);
+begin
+  OpenFile;
+end;
+
+procedure TFPrincipal.OpenFile;
 begin
   with OpenDialog do
   begin
@@ -181,6 +219,16 @@ begin
   begin
     SaveAsFile;
   end;
+end;
+
+procedure TFPrincipal.sbNewFileClick(Sender: TObject);
+begin
+  NewFile;
+end;
+
+procedure TFPrincipal.sbOpenFileClick(Sender: TObject);
+begin
+  OpenFile;
 end;
 
 procedure TFPrincipal.SaveAsFile;
@@ -233,6 +281,106 @@ begin
   Result := vWord_Count;
 end;
 
+function TFPrincipal.Wrap(vText: String): String;
+var
+  vList : TStringList;
+  vAuxStr: string;
+  vAuxWord: string;
+  I: Integer;
+  K: Integer;
+  vAuxKeyWord: TCountWords;
+  c: TObjectWords;
+begin
+  vAuxStr := WrapText(vText, 1);
+
+  { List of Word }
+  vList := TStringList.Create;
+  vList.Text := vAuxStr;
+  vList.sort;
+
+  { Clean string of strange characters }
+  for I := 0 to vList.Count - 1 do
+  begin
+    vList[I] := Trim(vList[I]);
+    if vList[I].Length < 3 then
+    begin
+      vList[I] := '';
+    end;
+  end;
+
+  // Showmessage('List Count '+IntToStr(vList.Count));
+
+  vAuxWord := '';
+  K := 0;
+  SetLength(vaWords, 0);
+
+  for I := 0 to vList.Count - 1 do
+  begin
+    if vList[I].Length > 3 then
+    begin
+      if vList[I] = vAuxWord then
+      begin
+        inc(vaWords[K-1].Count);
+      end
+      else
+      begin
+        SetLength(vaWords, Length(vaWords) + 1);
+        vaWords[K].Word := vList[I];
+        vaWords[K].Count := 1;
+        vAuxWord := vList[I];
+        inc(K);
+      end;
+    end;
+  end;
+
+
+  TSortListWords := TObjectList<TObjectWords>.Create(True);
+  for I := 0 to Length(vaWords) - 1 do
+  begin
+    c := TObjectWords.Create;
+    c.Data.Word := vaWords[I].Word;
+    c.Data.Count := vaWords[I].Count;
+
+    TSortListWords.Add(c);
+  end;
+
+  { Sort }
+  TSortListWords.Sort(TComparer<TObjectWords>.Construct(
+      function(const a, b: TObjectWords): Integer
+      begin
+        { Sort Count }
+        if TObjectWords(a).Data.Count < TObjectWords(b).Data.Count then
+          Result := 1
+        else
+          if TObjectWords(a).Data.Count > TObjectWords(b).Data.Count then
+            Result := -1
+          else
+            { Sort Count + Word }
+            if LowerCase(TObjectWords(a).Data.Word) > LowerCase(TObjectWords(b).Data.Word) then
+              Result := 1
+            else
+              if LowerCase(TObjectWords(a).Data.Word) < LowerCase(TObjectWords(b).Data.Word) then
+                Result := -1
+              else
+                Result := 0;
+      end
+    ));
+
+  sgKeywords.RowCount := TSortListWords.Count;
+
+  for I := 0 to TSortListWords.Count - 1 do
+  begin
+    with TObjectWords(TSortListWords.Items[I]) do
+    begin
+      sgKeywords.Cells[0,I] := data.Word;
+      sgKeywords.Cells[1,I] := IntToStr(data.Count);
+    end;
+  end;
+
+end;
+
+
+
 procedure TFPrincipal.mmoTextChangeTracking(Sender: TObject);
 begin
   WordCountToLabel;
@@ -263,6 +411,11 @@ begin
   vAuxStr := vAuxStr + IntToStr(vSeg) + ' Seg';
 
   Result := vAuxStr;
+end;
+
+procedure TFPrincipal.SpeedButton1Click(Sender: TObject);
+begin
+  SaveFile;
 end;
 
 procedure TFPrincipal.WordCountToLabel;
@@ -314,6 +467,18 @@ begin
   sgDetails.Cells[0, 9] := 'Average speaking time';
   sgDetails.Cells[1, 9] := SegToHour(Round(vWordsCount * 60 / 180));
 
+  { Keywords }
+  Wrap(mmoText.Text);
 end;
+
+
+procedure TFPrincipal.FormResize(Sender: TObject);
+begin
+  if FPrincipal.Height < 600 then
+    FPrincipal.Height := 600;
+  if FPrincipal.Width < 800 then
+    FPrincipal.Width := 800;
+end;
+
 
 end.
