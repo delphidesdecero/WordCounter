@@ -8,7 +8,7 @@ uses
   IniFiles,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Menus,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo,
-  FMX.Grid.Style, FMX.Grid, FMX.DialogService, System.ImageList, FMX.ImgList;
+  FMX.Grid.Style, FMX.Grid, FMX.DialogService, System.ImageList, FMX.ImgList, FMX.Edit, FMX.EditBox, FMX.SpinBox;
 
 type
   TCountWords = record
@@ -17,14 +17,12 @@ type
   end;
 
   TObjectWords = class(Tobject)
-   public
-      Data: TCountWords
-   end;
+  public
+    Data: TCountWords end;
 
-  TCountType = (ctWord, ctParagraph, ctSentence);
+    TCountType = (ctWord, ctParagraph, ctSentence);
 
-  TFPrincipal = class(TForm)
-    MainMenu1: TMainMenu;
+    TFPrincipal = class(TForm)MainMenu1: TMainMenu;
     StyleBook1: TStyleBook;
     MenuFile: TMenuItem;
     MenuItem3: TMenuItem;
@@ -49,24 +47,35 @@ type
     ilIconMenu: TImageList;
     sbOpenFile: TSpeedButton;
     SpeedButton1: TSpeedButton;
+    Keywords: TGroupBox;
     sgKeywords: TStringGrid;
     StringColumn1: TStringColumn;
     StringColumn2: TStringColumn;
-    procedure MenuExitClick(Sender: TObject);
-    procedure mmoTextKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
+    Splitter1: TSplitter;
+    GroupBox3: TGroupBox;
+    Label1: TLabel;
+    sbKeyword: TSpinBox;
+    Label2: TLabel;
+    Label3: TLabel;
+    SpinBox1: TSpinBox;
+    Label4: TLabel;
+    procedure MenuExitClick(Sender: Tobject);
+    procedure mmoTextKeyUp(Sender: Tobject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
     procedure WordCountToLabel;
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure FormShow(Sender: TObject);
-    procedure MenuOpenClick(Sender: TObject);
-    procedure MenuSaveClick(Sender: TObject);
-    procedure MenuNewClick(Sender: TObject);
-    procedure mmoTextChangeTracking(Sender: TObject);
-    procedure MenuSaveAsClick(Sender: TObject);
-    procedure MenuItem11Click(Sender: TObject);
-    procedure sbNewFileClick(Sender: TObject);
-    procedure sbOpenFileClick(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
-    procedure FormResize(Sender: TObject);
+    procedure FormClose(Sender: Tobject; var Action: TCloseAction);
+    procedure FormShow(Sender: Tobject);
+    procedure MenuOpenClick(Sender: Tobject);
+    procedure MenuSaveClick(Sender: Tobject);
+    procedure MenuNewClick(Sender: Tobject);
+    procedure mmoTextChangeTracking(Sender: Tobject);
+    procedure MenuSaveAsClick(Sender: Tobject);
+    procedure MenuItem11Click(Sender: Tobject);
+    procedure sbNewFileClick(Sender: Tobject);
+    procedure sbOpenFileClick(Sender: Tobject);
+    procedure SpeedButton1Click(Sender: Tobject);
+    procedure FormResize(Sender: Tobject);
+    procedure sbKeywordChange(Sender: TObject);
+    procedure SpinBox1Change(Sender: TObject);
   private
     { Private declarations }
     procedure SaveFile;
@@ -74,6 +83,7 @@ type
     procedure SaveAsFile;
     procedure IsSaved;
     procedure NewFile;
+    function CleanString(vText: string): string;
     function Wrap(vText: String): String;
     function Counter(vText: String; vCountType: TCountType): Int64;
     function SegToHour(vSeg: Int64): String;
@@ -84,7 +94,7 @@ type
     vIsOpenFile: Boolean;
     vPathFileOpen: String;
     vaWords: array of TCountWords;
-    TSortListWords : TObjectList<TObjectWords>;
+    TSortListWords: TObjectList<TObjectWords>;
   end;
 
 var
@@ -94,9 +104,9 @@ implementation
 
 {$R *.fmx}
 
-uses USplash, UAbout, Unit2;
+uses USplash, UAbout;
 
-procedure TFPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TFPrincipal.FormClose(Sender: Tobject; var Action: TCloseAction);
 var
   vFile: TIniFile;
 begin
@@ -130,7 +140,7 @@ begin
   end;
 end;
 
-procedure TFPrincipal.FormShow(Sender: TObject);
+procedure TFPrincipal.FormShow(Sender: Tobject);
 var
   vFile: TIniFile;
 begin
@@ -152,17 +162,17 @@ begin
   mmoText.SetFocus;
 end;
 
-procedure TFPrincipal.MenuExitClick(Sender: TObject);
+procedure TFPrincipal.MenuExitClick(Sender: Tobject);
 begin
   Close;
 end;
 
-procedure TFPrincipal.MenuItem11Click(Sender: TObject);
+procedure TFPrincipal.MenuItem11Click(Sender: Tobject);
 begin
   FAbout.ShowModal;
 end;
 
-procedure TFPrincipal.MenuNewClick(Sender: TObject);
+procedure TFPrincipal.MenuNewClick(Sender: Tobject);
 begin
   NewFile;
 end;
@@ -177,7 +187,7 @@ begin
   vSaved := True;
 end;
 
-procedure TFPrincipal.MenuOpenClick(Sender: TObject);
+procedure TFPrincipal.MenuOpenClick(Sender: Tobject);
 begin
   OpenFile;
 end;
@@ -199,12 +209,12 @@ begin
   end;
 end;
 
-procedure TFPrincipal.MenuSaveAsClick(Sender: TObject);
+procedure TFPrincipal.MenuSaveAsClick(Sender: Tobject);
 begin
   SaveAsFile;
 end;
 
-procedure TFPrincipal.MenuSaveClick(Sender: TObject);
+procedure TFPrincipal.MenuSaveClick(Sender: Tobject);
 begin
   SaveFile;
 end;
@@ -221,12 +231,17 @@ begin
   end;
 end;
 
-procedure TFPrincipal.sbNewFileClick(Sender: TObject);
+procedure TFPrincipal.sbKeywordChange(Sender: TObject);
+begin
+  WordCountToLabel;
+end;
+
+procedure TFPrincipal.sbNewFileClick(Sender: Tobject);
 begin
   NewFile;
 end;
 
-procedure TFPrincipal.sbOpenFileClick(Sender: TObject);
+procedure TFPrincipal.sbOpenFileClick(Sender: Tobject);
 begin
   OpenFile;
 end;
@@ -283,13 +298,14 @@ end;
 
 function TFPrincipal.Wrap(vText: String): String;
 var
-  vList : TStringList;
+  vList: TStringList;
   vAuxStr: string;
   vAuxWord: string;
-  I: Integer;
-  K: Integer;
+  I: Int64;
+  K: Int64;
   vAuxKeyWord: TCountWords;
   c: TObjectWords;
+  vTop: Integer;
 begin
   vAuxStr := WrapText(vText, 1);
 
@@ -301,7 +317,7 @@ begin
   { Clean string of strange characters }
   for I := 0 to vList.Count - 1 do
   begin
-    vList[I] := Trim(vList[I]);
+    vList[I] := Trim(CleanString(vList[I]));
     if vList[I].Length < 3 then
     begin
       vList[I] := '';
@@ -320,7 +336,7 @@ begin
     begin
       if vList[I] = vAuxWord then
       begin
-        inc(vaWords[K-1].Count);
+        Inc(vaWords[K - 1].Count);
       end
       else
       begin
@@ -328,11 +344,10 @@ begin
         vaWords[K].Word := vList[I];
         vaWords[K].Count := 1;
         vAuxWord := vList[I];
-        inc(K);
+        Inc(K);
       end;
     end;
   end;
-
 
   TSortListWords := TObjectList<TObjectWords>.Create(True);
   for I := 0 to Length(vaWords) - 1 do
@@ -345,48 +360,91 @@ begin
   end;
 
   { Sort }
-  TSortListWords.Sort(TComparer<TObjectWords>.Construct(
-      function(const a, b: TObjectWords): Integer
-      begin
-        { Sort Count }
-        if TObjectWords(a).Data.Count < TObjectWords(b).Data.Count then
+  TSortListWords.sort(TComparer<TObjectWords>.Construct(
+    function(const a, b: TObjectWords): Integer
+    begin
+      { Sort Count }
+      if TObjectWords(a).Data.Count < TObjectWords(b).Data.Count then
+        Result := 1
+      else if TObjectWords(a).Data.Count > TObjectWords(b).Data.Count then
+        Result := -1
+      else
+        { Sort Count + Word }
+        if LowerCase(TObjectWords(a).Data.Word) > LowerCase(TObjectWords(b).Data.Word) then
           Result := 1
+        else if LowerCase(TObjectWords(a).Data.Word) < LowerCase(TObjectWords(b).Data.Word) then
+          Result := -1
         else
-          if TObjectWords(a).Data.Count > TObjectWords(b).Data.Count then
-            Result := -1
-          else
-            { Sort Count + Word }
-            if LowerCase(TObjectWords(a).Data.Word) > LowerCase(TObjectWords(b).Data.Word) then
-              Result := 1
-            else
-              if LowerCase(TObjectWords(a).Data.Word) < LowerCase(TObjectWords(b).Data.Word) then
-                Result := -1
-              else
-                Result := 0;
-      end
-    ));
+          Result := 0;
+    end));
 
-  sgKeywords.RowCount := TSortListWords.Count;
 
-  for I := 0 to TSortListWords.Count - 1 do
+  if TSortListWords.Count < sbKeyword.Value then
+    vTop := TSortListWords.Count - 1
+  else
+    vTop := round(sbKeyword.Value) - 1;
+
+  sgKeywords.RowCount := vTop + 1;
+
+
+  for I := 0 to vTop do
   begin
     with TObjectWords(TSortListWords.Items[I]) do
     begin
-      sgKeywords.Cells[0,I] := data.Word;
-      sgKeywords.Cells[1,I] := IntToStr(data.Count);
+      sgKeywords.Cells[0, I] := Data.Word;
+      sgKeywords.Cells[1, I] := IntToStr(Data.Count);
     end;
   end;
 
 end;
 
+function TFPrincipal.CleanString(vText: string): string;
+var
+  I: Int64;
+  vAuxStr: string;
+  vAuxChar: Char;
+  vLowerText: string;
 
+  function NumberCharacter(vAs_Arg: Char): Boolean;
+  begin
+    Result := vAs_Arg In ['0' .. '9'];
+  end;
 
-procedure TFPrincipal.mmoTextChangeTracking(Sender: TObject);
+begin
+  try
+    vAuxStr := '';
+    vLowerText := LowerCase(vText);
+
+    for I := 0 to vText.Length do
+    begin
+      vAuxChar := vLowerText[I];
+      if vAuxChar In ['a' .. 'z'] then
+      begin
+        vAuxStr := vAuxStr + vText[I];
+      end
+      else
+      begin
+        if NumberCharacter(vAuxChar) then
+        begin
+          vAuxStr := '';
+          Break;
+        end;
+      end;
+    end;
+  except
+    vAuxStr := '';
+  end;
+
+  Result := vAuxStr;
+
+end;
+
+procedure TFPrincipal.mmoTextChangeTracking(Sender: Tobject);
 begin
   WordCountToLabel;
 end;
 
-procedure TFPrincipal.mmoTextKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
+procedure TFPrincipal.mmoTextKeyUp(Sender: Tobject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
 begin
   WordCountToLabel;
 end;
@@ -413,9 +471,14 @@ begin
   Result := vAuxStr;
 end;
 
-procedure TFPrincipal.SpeedButton1Click(Sender: TObject);
+procedure TFPrincipal.SpeedButton1Click(Sender: Tobject);
 begin
   SaveFile;
+end;
+
+procedure TFPrincipal.SpinBox1Change(Sender: TObject);
+begin
+  ShowMessage('Soon');
 end;
 
 procedure TFPrincipal.WordCountToLabel;
@@ -471,14 +534,12 @@ begin
   Wrap(mmoText.Text);
 end;
 
-
-procedure TFPrincipal.FormResize(Sender: TObject);
+procedure TFPrincipal.FormResize(Sender: Tobject);
 begin
   if FPrincipal.Height < 600 then
     FPrincipal.Height := 600;
   if FPrincipal.Width < 800 then
     FPrincipal.Width := 800;
 end;
-
 
 end.
