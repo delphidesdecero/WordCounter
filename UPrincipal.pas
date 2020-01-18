@@ -1,5 +1,5 @@
 unit UPrincipal;
-
+
 interface
 
 uses
@@ -51,14 +51,18 @@ type
     sgKeywords: TStringGrid;
     StringColumn1: TStringColumn;
     StringColumn2: TStringColumn;
-    Splitter1: TSplitter;
     GroupBox3: TGroupBox;
     Label1: TLabel;
     sbKeyword: TSpinBox;
     Label2: TLabel;
     Label3: TLabel;
-    SpinBox1: TSpinBox;
+    sbLongtail: TSpinBox;
     Label4: TLabel;
+    Label5: TLabel;
+    sbMinChar: TSpinBox;
+    Label6: TLabel;
+    cbWithNumbers: TCheckBox;
+    Button1: TButton;
     procedure MenuExitClick(Sender: Tobject);
     procedure mmoTextKeyUp(Sender: Tobject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
     procedure WordCountToLabel;
@@ -74,8 +78,11 @@ type
     procedure sbOpenFileClick(Sender: Tobject);
     procedure SpeedButton1Click(Sender: Tobject);
     procedure FormResize(Sender: Tobject);
-    procedure sbKeywordChange(Sender: TObject);
-    procedure SpinBox1Change(Sender: TObject);
+    procedure sbKeywordChange(Sender: Tobject);
+    procedure sbLongtailChange(Sender: Tobject);
+    procedure sbMinCharChange(Sender: Tobject);
+    procedure cbWithNumbersChange(Sender: Tobject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     procedure SaveFile;
@@ -231,7 +238,7 @@ begin
   end;
 end;
 
-procedure TFPrincipal.sbKeywordChange(Sender: TObject);
+procedure TFPrincipal.sbKeywordChange(Sender: Tobject);
 begin
   WordCountToLabel;
 end;
@@ -298,104 +305,176 @@ end;
 
 function TFPrincipal.Wrap(vText: String): String;
 var
+  vFirstList: TStringList;
+  vAuxList: TStringList;
   vList: TStringList;
-  vAuxStr: string;
+
+  vAuxWrapStr: string;
   vAuxWord: string;
+
+  vTopKeyword: Integer;
+  vLongtail: Integer;
+  vMinCharacters: Integer;
+
   I: Int64;
+  J: Int64;
   K: Int64;
-  vAuxKeyWord: TCountWords;
+  vAuxCount: Int64;
+
   c: TObjectWords;
+
   vTop: Integer;
+  vBreak: Boolean;
+
 begin
-  vAuxStr := WrapText(vText, 1);
+  try
+    vTopKeyword := Round(sbKeyword.Value);
+    vLongtail := Round(sbLongtail.Value);
+    vMinCharacters := Round(sbMinChar.Value);
 
-  { List of Word }
-  vList := TStringList.Create;
-  vList.Text := vAuxStr;
-  vList.sort;
+    vAuxWrapStr := WrapText(vText, 1);
 
-  { Clean string of strange characters }
-  for I := 0 to vList.Count - 1 do
-  begin
-    vList[I] := Trim(CleanString(vList[I]));
-    if vList[I].Length < 3 then
-    begin
-      vList[I] := '';
+    { List Aux of Word }
+    vFirstList := TStringList.Create;
+    vFirstList.Text := vAuxWrapStr;
+
+    { Clean string of strange characters }
+    vFirstList.BeginUpdate;
+    try
+      try
+        J := 0;
+        for I := 0 to vFirstList.Count - 1 do
+        begin
+          vFirstList[I] := Trim(CleanString(vFirstList[I]));
+          if vFirstList[I].Length < vMinCharacters then
+          begin
+            vFirstList[I] := '';
+          end;
+        end;
+      except
+
+      end;
+    finally
+      vFirstList.EndUpdate;
     end;
-  end;
 
-  // Showmessage('List Count '+IntToStr(vList.Count));
+    vAuxList := TStringList.Create;
+    for I := 0 to vFirstList.Count - 1 do
+    begin
+      if Length(vFirstList[I]) > 0 then
+        vAuxList.Add(vFirstList[I]);
+    end;
 
-  vAuxWord := '';
-  K := 0;
-  SetLength(vaWords, 0);
+    { Longtail }
+    vList := TStringList.Create;
+    vList.BeginUpdate;
+    for I := 0 to vAuxList.Count - 1 do
+    begin
+      vAuxWord := '';
+      for J := I to I + vLongtail - 1 do
+      begin
+        vAuxWord := vAuxWord + ' ' + vAuxList[J];
+        if J >= vAuxList.Count - 1 then
+          vBreak := True;
+      end;
+      vList.Add(Trim(vAuxWord));
+      if vBreak then
+        Break;
+    end;
+    vList.EndUpdate;
 
-  for I := 0 to vList.Count - 1 do
-  begin
-    if vList[I].Length > 3 then
+    { Sort }
+    vList.Sort;
+
+    K := 0;
+    vAuxWord := '';
+    vAuxCount := 0;
+    { We pass the word list to TSortListWords according to longtail, in order to order them }
+    TSortListWords := TObjectList<TObjectWords>.Create(True);
+    for I := 0 to vList.Count - 1 do
     begin
       if vList[I] = vAuxWord then
       begin
-        Inc(vaWords[K - 1].Count);
+        Inc(TObjectWords(TSortListWords.Items[K - 1]).Data.Count);
+        Inc(vAuxCount);
       end
       else
       begin
-        SetLength(vaWords, Length(vaWords) + 1);
-        vaWords[K].Word := vList[I];
-        vaWords[K].Count := 1;
+        c := TObjectWords.Create;
+        c.Data.Count := 1;
+        c.Data.Word := vList[I];
+        TSortListWords.Add(c);
+
         vAuxWord := vList[I];
         Inc(K);
+        Inc(vAuxCount);
       end;
     end;
-  end;
 
-  TSortListWords := TObjectList<TObjectWords>.Create(True);
-  for I := 0 to Length(vaWords) - 1 do
-  begin
-    c := TObjectWords.Create;
-    c.Data.Word := vaWords[I].Word;
-    c.Data.Count := vaWords[I].Count;
-
-    TSortListWords.Add(c);
-  end;
-
-  { Sort }
-  TSortListWords.sort(TComparer<TObjectWords>.Construct(
-    function(const a, b: TObjectWords): Integer
+    { Sort }
+    if TSortListWords.Count > 1 then
     begin
-      { Sort Count }
-      if TObjectWords(a).Data.Count < TObjectWords(b).Data.Count then
-        Result := 1
-      else if TObjectWords(a).Data.Count > TObjectWords(b).Data.Count then
-        Result := -1
+      TSortListWords.Sort(TComparer<TObjectWords>.Construct(
+        function(const a, b: TObjectWords): Integer
+        begin
+          { Sort Count }
+          if TObjectWords(a).Data.Count < TObjectWords(b).Data.Count then
+            Result := 1
+          else if TObjectWords(a).Data.Count > TObjectWords(b).Data.Count then
+            Result := -1
+          else
+            { Sort Count + Word }
+            if LowerCase(TObjectWords(a).Data.Word) > LowerCase(TObjectWords(b).Data.Word) then
+              Result := 1
+            else if LowerCase(TObjectWords(a).Data.Word) < LowerCase(TObjectWords(b).Data.Word) then
+              Result := -1
+            else
+              Result := 0;
+        end));
+    end;
+
+    if TSortListWords.Count > 0 then
+    begin
+      if TSortListWords.Count < sbKeyword.Value then
+        vTop := TSortListWords.Count - 1
       else
-        { Sort Count + Word }
-        if LowerCase(TObjectWords(a).Data.Word) > LowerCase(TObjectWords(b).Data.Word) then
-          Result := 1
-        else if LowerCase(TObjectWords(a).Data.Word) < LowerCase(TObjectWords(b).Data.Word) then
-          Result := -1
-        else
-          Result := 0;
-    end));
+        vTop := Round(sbKeyword.Value) - 1;
 
+      sgKeywords.RowCount := vTop + 1;
 
-  if TSortListWords.Count < sbKeyword.Value then
-    vTop := TSortListWords.Count - 1
-  else
-    vTop := round(sbKeyword.Value) - 1;
-
-  sgKeywords.RowCount := vTop + 1;
-
-
-  for I := 0 to vTop do
-  begin
-    with TObjectWords(TSortListWords.Items[I]) do
+      { We pass the keywords to the grid }
+      for I := 0 to vTop do
+      begin
+        with TObjectWords(TSortListWords.Items[I]) do
+        begin
+          sgKeywords.Cells[0, I] := Data.Word;
+          sgKeywords.Cells[1, I] := IntToStr(Data.Count) + ' (' + FloatToStrF( Data.Count * 100 / vAuxCount, fffixed, 10 , 2) + '%)' ;
+        end;
+      end;
+    end
+    else
     begin
-      sgKeywords.Cells[0, I] := Data.Word;
-      sgKeywords.Cells[1, I] := IntToStr(Data.Count);
+      sgKeywords.RowCount := 1;
+      sgKeywords.Cells[0, I] := 'No Keyword';
+      sgKeywords.Cells[1, I] := '0';
+    end;
+  except
+    On E: exception do
+    begin
+      showmessage(E.message);
     end;
   end;
 
+end;
+
+procedure TFPrincipal.Button1Click(Sender: TObject);
+begin
+  Showmessage(IntToStr(mmotext.lines.count));
+end;
+
+procedure TFPrincipal.cbWithNumbersChange(Sender: Tobject);
+begin
+  WordCountToLabel;
 end;
 
 function TFPrincipal.CleanString(vText: string): string;
@@ -407,7 +486,10 @@ var
 
   function NumberCharacter(vAs_Arg: Char): Boolean;
   begin
-    Result := vAs_Arg In ['0' .. '9'];
+    if cbWithNumbers.isChecked then
+      Result := False
+    else
+      Result := vAs_Arg In ['0' .. '9'];
   end;
 
 begin
@@ -476,9 +558,14 @@ begin
   SaveFile;
 end;
 
-procedure TFPrincipal.SpinBox1Change(Sender: TObject);
+procedure TFPrincipal.sbLongtailChange(Sender: Tobject);
 begin
-  ShowMessage('Soon');
+  WordCountToLabel;
+end;
+
+procedure TFPrincipal.sbMinCharChange(Sender: Tobject);
+begin
+  WordCountToLabel;
 end;
 
 procedure TFPrincipal.WordCountToLabel;
@@ -487,13 +574,19 @@ var
   vCharacteresCount: Int64;
   vParagraphCount: Int64;
   vSentences: Int64;
+  vLineBreak: Int64;
 begin
   vSaved := False;
 
   { Counts }
   vWordsCount := Counter(mmoText.Text, ctWord);
-  vCharacteresCount := mmoText.Text.Length;
   vSentences := Counter(mmoText.Text, ctSentence);
+
+  vLineBreak := (mmoText.Lines.Count - 1) * 2;
+  vCharacteresCount := mmoText.Text.Length - vLineBreak;
+  if vCharacteresCount < 0 then
+    vCharacteresCount := 0;
+
   vParagraphCount := Counter(mmoText.Text, ctParagraph);
 
   { Label }
@@ -543,3 +636,4 @@ begin
 end;
 
 end.
+

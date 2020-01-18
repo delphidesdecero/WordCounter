@@ -12362,21 +12362,6 @@ object FAbout: TFAbout
     Viewport.Width = 396.000000000000000000
     Viewport.Height = 263.000000000000000000
   end
-  object lblUrl: TLabel
-    Align = Top
-    ControlType = Platform
-    Cursor = crHandPoint
-    StyledSettings = [Family, Style, FontColor]
-    Position.Y = 267.000000000000000000
-    Size.Width = 400.000000000000000000
-    Size.Height = 30.000000000000000000
-    Size.PlatformDefault = False
-    TextSettings.Font.Size = 24.000000000000000000
-    TextSettings.HorzAlign = Center
-    Text = 'delphidesdecero.com'
-    TabOrder = 1
-    OnClick = lblUrlClick
-  end
   object btnClose: TButton
     Align = Bottom
     Margins.Left = 300.000000000000000000
@@ -12405,6 +12390,38 @@ object FAbout: TFAbout
   object Memo1: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
+    Lines.Strings = (
+      '[17/01/2020 Versi'#243'n 1.1]'
+      '- Keywords'
+      '  - Cantidad de Palabras para Keyword Longtail'
+      '  - Elecci'#243'n de Keyword con o sin n'#250'meros'
+      '  - Caracteres m'#237'nimos para Keyword'
+      '  - Densidad de Keyword'
+      '- Soluci'#243'n de Bug'#39's'
+      '  - Contador de caracteres'
+      ''
+      '[15/01/2020 Versi'#243'n 1.0]'
+      '- Contadores'
+      '  - Cantidad de Palabras (Words)'
+      '  - Cantidad de caracteres (Characters)'
+      '  - Cantidad de Oraciones (Sentences)'
+      '  - P'#225'rrafos (Paragraphs)'
+      '- Promedios'
+      '  - Palabras por oraciones (Average Words per sentences)'
+      '  - Caracteres por oraciones (Average Characters per sentences)'
+      '  - Palabras por p'#225'rrafo (Average Words per paragraph)'
+      '  - Caracteres por p'#225'rrafo (Average Characters per paragraph)'
+      '  - Tiempo promedio de lectura (Average reading time)'
+      
+        '  - Tiempo promedio de lectura en voz alta (Average speaking tim' +
+        'e)'
+      '- Keywords'
+      '  - Top de palabras claves (Top Keywords)'
+      '- Manejo de archivo de texto'
+      '  - Nuevo Archivo (New file)'
+      '  - Grabar archivos (Save file)'
+      '  - Grabar archivo como (Save file as)'
+      '  - Abrir Archivos (Open File)')
     ReadOnly = True
     Align = Client
     Margins.Left = 10.000000000000000000
@@ -12415,7 +12432,21 @@ object FAbout: TFAbout
     Size.Height = 175.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 5
-    Viewport.Width = 380.000000000000000000
-    Viewport.Height = 175.000000000000000000
+    Viewport.Width = 360.000000000000000000
+    Viewport.Height = 171.000000000000000000
+  end
+  object lblUrl: TLabel
+    Align = Top
+    Cursor = crHandPoint
+    StyledSettings = [Family, Style, FontColor]
+    Position.Y = 267.000000000000000000
+    Size.Width = 400.000000000000000000
+    Size.Height = 30.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 24.000000000000000000
+    TextSettings.HorzAlign = Center
+    Text = 'delphidesdecero.com'
+    TabOrder = 1
+    OnClick = lblUrlClick
   end
 end

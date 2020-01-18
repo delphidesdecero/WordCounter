@@ -56,7 +56,7 @@ end;
 
 procedure TFAbout.ImageViewer1Click(Sender: TObject);
 begin
-  ShellOpen('https://delphidesdecero.com');
+  ShellOpen('https://delphidesdecero.com/proyectos/');
 end;
 
 procedure TFAbout.lblUrlClick(Sender: TObject);
