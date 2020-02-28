@@ -3,7 +3,6 @@ object FSplash: TFSplash
   Top = 0
   BorderIcons = []
   BorderStyle = None
-  Caption = 'Form1'
   ClientHeight = 400
   ClientWidth = 600
   Fill.Bitmap.Bitmap.PNG = {
@@ -12352,11 +12351,12 @@ object FSplash: TFSplash
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnShow = FormShow
   DesignerMasterStyle = 0
-  object tmrSplash: TTimer
-    Interval = 2000
-    OnTimer = tmrSplashTimer
-    Left = 288
-    Top = 16
+  object TmrSplash: TTimer
+    Interval = 3000
+    OnTimer = TmrSplashTimer
+    Left = 208
+    Top = 128
   end
 end

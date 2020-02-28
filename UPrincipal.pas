@@ -62,7 +62,8 @@ type
     sbMinChar: TSpinBox;
     Label6: TLabel;
     cbWithNumbers: TCheckBox;
-    Button1: TButton;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
     procedure MenuExitClick(Sender: Tobject);
     procedure mmoTextKeyUp(Sender: Tobject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
     procedure WordCountToLabel;
@@ -82,7 +83,7 @@ type
     procedure sbLongtailChange(Sender: Tobject);
     procedure sbMinCharChange(Sender: Tobject);
     procedure cbWithNumbersChange(Sender: Tobject);
-    procedure Button1Click(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
   private
     { Private declarations }
     procedure SaveFile;
@@ -111,7 +112,7 @@ implementation
 
 {$R *.fmx}
 
-uses USplash, UAbout;
+uses USplash, UAbout, UKeywordsMining;
 
 procedure TFPrincipal.FormClose(Sender: Tobject; var Action: TCloseAction);
 var
@@ -177,6 +178,11 @@ end;
 procedure TFPrincipal.MenuItem11Click(Sender: Tobject);
 begin
   FAbout.ShowModal;
+end;
+
+procedure TFPrincipal.MenuItem2Click(Sender: TObject);
+begin
+  FKeywordMining.Show;
 end;
 
 procedure TFPrincipal.MenuNewClick(Sender: Tobject);
@@ -465,11 +471,6 @@ begin
     end;
   end;
 
-end;
-
-procedure TFPrincipal.Button1Click(Sender: TObject);
-begin
-  Showmessage(IntToStr(mmotext.lines.count));
 end;
 
 procedure TFPrincipal.cbWithNumbersChange(Sender: Tobject);

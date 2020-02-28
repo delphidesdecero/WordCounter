@@ -12391,6 +12391,9 @@ object FAbout: TFAbout
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
     Lines.Strings = (
+      '[20/01/2020 Versi'#243'n 1.2]'
+      '- Miner'#237'a de Keyword'
+      ''
       '[17/01/2020 Versi'#243'n 1.1]'
       '- Keywords'
       '  - Cantidad de Palabras para Keyword Longtail'

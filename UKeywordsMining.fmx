@@ -1,0 +1,143 @@
+object FKeywordMining: TFKeywordMining
+  Left = 0
+  Top = 0
+  BorderIcons = []
+  BorderStyle = Single
+  Caption = 'Keyword Mining'
+  ClientHeight = 480
+  ClientWidth = 640
+  Position = ScreenCenter
+  StyleBook = FPrincipal.StyleBook1
+  FormStyle = StayOnTop
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnClose = FormClose
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object GroupBox1: TGroupBox
+    Align = Top
+    Size.Width = 640.000000000000000000
+    Size.Height = 57.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Enter keyword to mine separated by comma (Ej: Ky1,Ky2,Ky3)'
+    TabOrder = 0
+    object edtKeywordSearch: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Client
+      TabOrder = 0
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 18.000000000000000000
+      Margins.Right = 15.000000000000000000
+      Margins.Bottom = 13.000000000000000000
+      Size.Width = 495.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object btnStart: TButton
+      Align = Right
+      Margins.Top = 15.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Position.X = 520.000000000000000000
+      Position.Y = 15.000000000000000000
+      Size.Width = 110.000000000000000000
+      Size.Height = 32.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Start mining'
+      OnClick = btnStartClick
+    end
+  end
+  object GroupBox2: TGroupBox
+    Align = Client
+    Size.Width = 640.000000000000000000
+    Size.Height = 323.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Keywords'
+    TabOrder = 1
+    object mmoKeywords: TMemo
+      Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+      DataDetectorTypes = []
+      ReadOnly = True
+      Align = Client
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 20.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Size.Width = 620.000000000000000000
+      Size.Height = 293.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Viewport.Width = 616.000000000000000000
+      Viewport.Height = 289.000000000000000000
+    end
+  end
+  object GroupBox3: TGroupBox
+    Align = Bottom
+    Position.Y = 380.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 100.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Options'
+    TabOrder = 2
+    object lblNKey: TLabel
+      AutoSize = True
+      Position.X = 16.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 41.000000000000000000
+      Size.Height = 16.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.WordWrap = False
+      Text = 'lblNKey'
+      TabOrder = 0
+    end
+    object Button1: TButton
+      Align = Right
+      Margins.Top = 15.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Position.X = 550.000000000000000000
+      Position.Y = 15.000000000000000000
+      Size.Width = 80.000000000000000000
+      Size.Height = 75.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Exit'
+      OnClick = Button1Click
+    end
+    object cbTag: TCheckBox
+      Position.X = 16.000000000000000000
+      Position.Y = 48.000000000000000000
+      Size.Width = 97.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      Text = 'Format Tag'
+    end
+  end
+  object tmrMining: TTimer
+    Enabled = False
+    Interval = 3000
+    OnTimer = tmrMiningTimer
+    Left = 336
+    Top = 384
+  end
+  object IdHTTP1: TIdHTTP
+    AllowCookies = True
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
+    Request.ContentLength = -1
+    Request.ContentRangeEnd = -1
+    Request.ContentRangeStart = -1
+    Request.ContentRangeInstanceLength = -1
+    Request.Accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    Request.BasicAuthentication = False
+    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    Request.Ranges.Units = 'bytes'
+    Request.Ranges = <>
+    HTTPOptions = [hoForceEncodeParams]
+    Left = 360
+    Top = 193
+  end
+end

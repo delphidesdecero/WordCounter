@@ -3,21 +3,23 @@ unit USplash;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs;
+  FMX.Forms, System.Classes, FMX.Types;
 
 type
   TFSplash = class(TForm)
-    tmrSplash: TTimer;
-    procedure tmrSplashTimer(Sender: TObject);
+    TmrSplash: TTimer;
+    procedure TmrSplashTimer(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    vCompletado: Boolean;
   end;
 
 var
   FSplash: TFSplash;
+
 
 implementation
 
@@ -25,11 +27,14 @@ implementation
 
 uses UPrincipal;
 
-procedure TFSplash.tmrSplashTimer(Sender: TObject);
+procedure TFSplash.FormShow(Sender: TObject);
 begin
-  tmrSplash.Enabled := False;
-  FSplash.Visible  := False;
-  FPrincipal.Show;
+  vCompletado := False;
+end;
+
+procedure TFSplash.TmrSplashTimer(Sender: TObject);
+begin
+  vCompletado := True;
 end;
 
 end.
